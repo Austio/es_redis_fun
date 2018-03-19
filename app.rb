@@ -3,15 +3,21 @@ require 'sinatra/reloader'
 require 'net/http'
 require 'pry'
 
+
+module ESUtils
+  ES_HOST =
+  def es_get(path = '/',)
+    Net::HTTP.get('http://localhost:9200', path)
+  end
+end
+
+helpers ESUtils
+
+
 get '/' do
   'Howdy!'
 end
 
 get '/es' do
-  uri = URI.parse('http://localhost:9200')
-  h = Net::HTTP.new uri.host, uri.port
-  req = Net::HTTP::Get.new '/'
-
-  res = h.request req
-  res.body
+  [200, es_get]
 end
