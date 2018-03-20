@@ -9,15 +9,18 @@ module ESUtils
 
     Net::HTTP.get_response(uri).body
   end
+
+  def search(type)
+    es_get('/search/foo')
+  end
 end
 
 helpers ESUtils
 
-
 get '/' do
-  'Howdy!'
+  redirect('/search')
 end
 
-get '/es' do
-  [200, es_get]
+get '/search' do
+  erb :search
 end
