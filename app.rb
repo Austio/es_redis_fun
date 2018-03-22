@@ -22,5 +22,23 @@ get '/' do
 end
 
 get '/search' do
-  erb :search
+  erb :search_form
+end
+
+post '/search' do
+  erb :search_form, locals: { result: '5' }
+end
+
+get '/indexes' do
+  indexes = es_get('/_cat/indices?v&pretty').split(' ')
+
+  erb :indexes_list, locals: { indexes: indexes }
+end
+
+get '/indexes/new' do
+  erb :indexes_form
+end
+
+get '/indexes/:id' do
+  erb :indexes_form
 end
