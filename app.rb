@@ -2,18 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'net/http'
 require 'pry'
-
-module ESUtils
-  def es_get(path = '/')
-    uri = URI("http://localhost:9200#{path}")
-
-    Net::HTTP.get_response(uri).body
-  end
-
-  def search(type)
-    es_get('/search/foo')
-  end
-end
+require_relative './helpers/es_utils'
 
 helpers ESUtils
 
@@ -29,16 +18,28 @@ post '/search' do
   erb :search_form, locals: { result: '5' }
 end
 
+post '/indexes' do
+  es_put_index(params['index'])
+end
+
 get '/indexes' do
   indexes = es_get('/_cat/indices?v&pretty').split(' ')
-
   erb :indexes_list, locals: { indexes: indexes }
 end
 
 get '/indexes/new' do
-  erb :indexes_form
+  index = params["index"] || ''
+
+  erb :indexes_form, locals: { index: index }
 end
 
-get '/indexes/:id' do
-  erb :indexes_form
+get '/indexes/:index' do
+  index = params['index']
+  res = JSON.parse es_get("/#{index}")
+
+  if res["error"]
+    redirect("/indexes/new?index=#{index}")
+  end
+
+  erb :indexes_form, locals: { index: index }
 end
