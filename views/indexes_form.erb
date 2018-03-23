@@ -1,7 +1,15 @@
 <form method="POST" action="/indexes">
   <p>Index Form</p>
   <p>
-    Mapping Name: <input type="text" name="index" value="<%= index %>"/>
+    Mapping Name: <input type="text" name="index" value="<%= index %>" size="80"/>
+  </p>
+
+  <p>
+    Aliases: <textarea name="aliases" value="<%= aliases %>"></textarea>
+  </p>
+
+  <p>
+    Mappings: <textarea rows="10" cols="80" name="mappings" value="<%= mappings %>" ></textarea>
   </p>
   <input type="submit">
 </form>

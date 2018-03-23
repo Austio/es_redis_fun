@@ -29,8 +29,9 @@ end
 
 get '/indexes/new' do
   index = params["index"] || ''
-
-  erb :indexes_form, locals: { index: index }
+  aliases = ""
+  mappings = ""
+  erb :indexes_form, locals: { index: index, aliases: aliases, mappings: mappings}
 end
 
 get '/indexes/:index' do
@@ -41,5 +42,9 @@ get '/indexes/:index' do
     redirect("/indexes/new?index=#{index}")
   end
 
-  erb :indexes_form, locals: { index: index }
+
+  aliases = res[index]["aliases"]
+  mappings = res[index]["mappings"]
+
+  erb :indexes_form, locals: { index: index, aliases: aliases, mappings: mappings}
 end
