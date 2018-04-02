@@ -1,2 +1,5 @@
-class Person < ApplicationRecord
+class Person
+  def mapping
+    [:name]
+  end
 end
