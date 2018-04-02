@@ -16,7 +16,6 @@ module ESUtils
     }
     # request.set_form_data({"users[login]" => "changed"})
     r = es_http.request(request)
-    binding.pry
     r
   end
 
