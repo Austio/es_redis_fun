@@ -42,7 +42,13 @@ services:
     depends_on:
       - elasticsearch
 
-networks:
+  redis:
+    image: redis:4.0.5-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: redis
+    networks:
+      - elk
 
+networks:
   elk:
     driver: bridge

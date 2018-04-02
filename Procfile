@@ -1,2 +1,2 @@
-elk: ./docker-elk/docker-compose up
-sinatra: ruby ./sinatra/app.rb
+elk: ./docker/docker-compose up
+rails: cd rails && rails s
