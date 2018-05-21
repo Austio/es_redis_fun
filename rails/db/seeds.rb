@@ -5,3 +5,13 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+
+# AGOT
+# character  city  dragon  house  quote
+
+if People.count == 0
+  50.times do
+    Person.create(name: Faker::GameOfThrones.character)
+  end
+end
