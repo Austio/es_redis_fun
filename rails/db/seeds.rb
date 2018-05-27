@@ -10,7 +10,7 @@
 # AGOT
 # character  city  dragon  house  quote
 
-if People.count == 0
+if Person.count == 0
   50.times do
     Person.create(name: Faker::GameOfThrones.character)
   end
