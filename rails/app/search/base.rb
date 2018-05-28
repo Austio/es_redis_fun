@@ -13,18 +13,27 @@ module Search
     end
 
     def mapping_set
-        es_set_mapping(index, mapping)
+      es_set_mapping(index, mapping)
     end
 
     def mapping_show
       get("/#{index}/_mapping/_doc")
     end
 
-
-    def get(path = '/')
+    def get(path = '/', json = nil, req_options: {})
       uri = get_uri(path)
 
-      as_response { Net::HTTP.get_response(uri) }
+      if !json
+        return as_response { Net::HTTP.get_response(uri) }
+      end
+
+      request = Net::HTTP::Get.new(uri)
+      request.content_type = "application/json"
+      request.body = JSON.dump(json)
+
+      as_response { Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+        http.request(request)
+      end }
     end
 
     def put(path, json, req_options = {})
@@ -55,6 +64,10 @@ module Search
       put("/#{index}/_doc/#{id}", data)
     end
 
+    def search(json = { })
+      get("/#{index}/_search", json)
+    end
+
     def es_mapping_set(index, attrs = {})
       json_mapping_statement = {
         "mappings": {
@@ -80,7 +93,6 @@ module Search
 
     private
 
-
     def get_uri(path, base: "http://localhost:9200")
       if path.first != "/"
         raise "path must begin with /"
@@ -104,6 +116,15 @@ module Search
 
       def total
         body.fetch("hits", {}).fetch("total", 0)
+      end
+
+      def results
+        hits = body.dig("hits", "hits")
+        hits && hits.each_with_object([]) do |hit, obj|
+          flat_hit = hit.merge(hit["_source"])
+          flat_hit.delete("_source")
+          obj.push(flat_hit)
+        end
       end
 
       def is_success?

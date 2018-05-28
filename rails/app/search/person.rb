@@ -20,17 +20,6 @@ module Search
       update_index(index, @obj.id, to_elasticsearch)
     end
 
-    def search
-system %(
-curl "localhost:9200/#{index}/_search" -H 'Content-Type: application/json' -d'
-{
-  "query":{
-     "match_all": {}
-  }
-}
-')
-    end
-
     def mapping
       {
           name: {
