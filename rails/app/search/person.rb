@@ -8,6 +8,18 @@ module Search
       'person'
     end
 
+    def find_by_name(name)
+      q = {
+        query: {
+          term: {
+            name: name
+          }
+        }
+      }
+
+      search(q)
+    end
+
     def to_elasticsearch
       {
         name: @obj.name,

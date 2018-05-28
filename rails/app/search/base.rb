@@ -20,7 +20,7 @@ module Search
       get("/#{index}/_mapping/_doc")
     end
 
-    def get(path = '/', json = nil, req_options: {})
+    def get(path = '/', json = nil, req_options = {})
       uri = get_uri(path)
 
       if !json
@@ -60,8 +60,8 @@ module Search
       end }
     end
 
-    def update_index(index, id, data)
-      put("/#{index}/_doc/#{id}", data)
+    def update_index(index, id, json)
+      put("/#{index}/_doc/#{id}", json)
     end
 
     def search(json = { })
