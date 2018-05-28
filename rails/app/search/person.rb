@@ -11,7 +11,7 @@ module Search
     def find_by_name(name)
       q = {
         query: {
-          term: {
+          match: {
             name: name
           }
         }

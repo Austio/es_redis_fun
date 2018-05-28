@@ -68,6 +68,10 @@ module Search
       get("/#{index}/_search", json)
     end
 
+    def analyze
+      get("/#{index}/_analyze")
+    end
+
     def es_mapping_set(index, attrs = {})
       json_mapping_statement = {
         "mappings": {
@@ -111,6 +115,8 @@ module Search
       end
 
       def body
+        return nil unless response.try(:body)
+
         @body ||= JSON.parse(response.body)
       end
 

@@ -1,5 +1,5 @@
 class PeopleController < ApplicationController
-  before_action :set_person, only: [:show, :edit, :update, :destroy]
+  before_action :set_person, only: [:edit, :update, :destroy]
 
   # GET /people
   # GET /people.json
@@ -10,6 +10,10 @@ class PeopleController < ApplicationController
   # GET /people/1
   # GET /people/1.json
   def show
+    @person = set_person
+    search_person = ::Search::Person.new().find_by_name(@person.name)
+
+    @es_person = search_person.results
   end
 
   # GET /people/new
