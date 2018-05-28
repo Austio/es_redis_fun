@@ -2,6 +2,6 @@ class Person < ApplicationRecord
   # after_commit :update_index
 
   def update_index
-    Search::Person.update(self)
+    Search::Person.new(self).update
   end
 end

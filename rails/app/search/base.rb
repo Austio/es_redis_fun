@@ -4,8 +4,25 @@ require "ostruct"
 
 module Search
   class Base
+    def index
+      raise "implement me"
+    end
+
+    def mapping
+      raise "implement me"
+    end
+
+    def mapping_set
+        es_set_mapping(index, mapping)
+    end
+
+    def mapping_show
+      get("/#{index}/_mapping/_doc")
+    end
+
+
     def get(path = '/')
-      uri = net_uri(path)
+      uri = get_uri(path)
 
       as_response { Net::HTTP.get_response(uri) }
     end
@@ -15,11 +32,11 @@ module Search
 
       request = Net::HTTP::Put.new(uri)
       request.content_type = "application/json"
-      request.body = json
+      request.body = JSON.dump(json)
 
-      Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      as_response { Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
         http.request(request)
-      end
+      end }
     end
 
     def post(path, json, req_options = {})
@@ -29,12 +46,40 @@ module Search
       request.content_type = "application/json"
       request.body = JSON.dump(json)
 
-      Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+      as_response { Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
         http.request(request)
-      end
+      end }
+    end
+
+    def update_index(index, id, data)
+      put("/#{index}/_doc/#{id}", data)
+    end
+
+    def es_mapping_set(index, attrs = {})
+      json_mapping_statement = {
+        "mappings": {
+          "_doc": {
+            "properties": attrs
+          }
+        }
+      }
+
+      put("/#{index}", json_mapping_statement)
+    end
+
+    def delete(index, req_options = {})
+      uri = get_uri("/#{index}")
+
+      request = Net::HTTP::Delete.new(uri)
+      request.content_type = "application/json"
+
+      as_response { Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
+        http.request(request)
+      end }
     end
 
     private
+
 
     def get_uri(path, base: "http://localhost:9200")
       if path.first != "/"
@@ -62,11 +107,15 @@ module Search
       end
 
       def is_success?
-        code == "200"
+        code == "200" || code == "201"
+      end
+
+      def is_error?
+        !is_success?
       end
 
       def error
-        body.fetch(:error) { nil }
+        body.fetch("error") { nil }
       end
     end
   end

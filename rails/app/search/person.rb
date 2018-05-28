@@ -1,24 +1,23 @@
 module Search
   class Person < Search::Base
+    def initialize(person = nil)
+      @obj = person
+    end
 
     def index
       'person'
     end
 
-    def from_ar(ar)
+    def to_elasticsearch
       {
-        name: ar.name,
-        created_at: ar.created_at,
-        updated_at: ar.updated_at
+        name: @obj.name,
+        created_at: @obj.epoch_created_at,
+        updated_at: @obj.epoch_updated_at
       }
     end
 
-    def update(ar)
-system %(
-curl "localhost:9200/#{index}/#{ar.id}" -H 'Content-Type: application/json' -d'
-#{from_ar(ar)}
-'
-)
+    def update
+      update_index(index, @obj.id, to_elasticsearch)
     end
 
     def search
@@ -32,27 +31,18 @@ curl "localhost:9200/#{index}/_search" -H 'Content-Type: application/json' -d'
 ')
     end
 
-    def create_mapping
-system %(
-curl -X PUT "localhost:9200/person" -H 'Content-Type: application/json' -d'
-{
-  "mappings": {
-    "_doc": {
-      "properties": {
-        "name": {
-          "type": "text"
-        },
-        "created_at": {
-          "type": "date"
-        },
-        "updated_at": {
-          "type": "date"
-        }
+    def mapping
+      {
+          name: {
+              type: "text"
+          },
+          created_at: {
+              type: "date"
+          },
+          updated_at: {
+              type: "date"
+          }
       }
-    }
-  }
-}
-')
     end
   end
 end
