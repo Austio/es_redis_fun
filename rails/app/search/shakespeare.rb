@@ -27,7 +27,7 @@ module Search
       }
     }.freeze
 
-    class Shingle
+    class Shingle < Base
       def index
         "shakespeare_shingle"
       end
@@ -58,9 +58,8 @@ module Search
         }
       end
 
-
       def mapping
-        BASE_MAPPING.merge({
+        a = BASE_MAPPING.merge({
           "speaker": {
             "type": "text",
             "analyzer": "completion_analyzer",
@@ -77,10 +76,13 @@ module Search
             "copy_to": ["completion"]
           },
           "completion": {
-            "type": "string",
-            "analyzer": "completion_analyzer"
+            "type": "text"
           }
         })
+        binding.pry
+
+        a
+
       end
     end
 

@@ -12,8 +12,19 @@ module Search
       raise "implement me"
     end
 
-    def mapping_set
-      es_set_mapping(index, mapping)
+    # Pass in mapping or use what is defined on the instance
+    def mapping_set(new_mapping = mapping)
+      create_index
+
+      json_mapping_statement = {
+          "_mapping": {
+              "_doc": {
+                  "properties": new_mapping
+              }
+          }
+      }
+
+      put("/#{index}", json_mapping_statement)
     end
 
     def mapping_show
@@ -36,12 +47,14 @@ module Search
       end }
     end
 
-    def put(path, json, req_options = {})
+    def put(path, json = nil, req_options = {})
       uri = get_uri(path)
 
       request = Net::HTTP::Put.new(uri)
       request.content_type = "application/json"
-      request.body = JSON.dump(json)
+      if json
+        request.body = JSON.dump(json)
+      end
 
       as_response { Net::HTTP.start(uri.hostname, uri.port, req_options) do |http|
         http.request(request)
@@ -72,18 +85,6 @@ module Search
       get("/#{index}/_analyze")
     end
 
-    def es_mapping_set(index, attrs = {})
-      json_mapping_statement = {
-        "mappings": {
-          "_doc": {
-            "properties": attrs
-          }
-        }
-      }
-
-      put("/#{index}", json_mapping_statement)
-    end
-
     def delete(index, req_options = {})
       uri = get_uri("/#{index}")
 
@@ -96,6 +97,11 @@ module Search
     end
 
     private
+
+    def create_index
+      put("/#{index}")
+    rescue
+    end
 
     def get_uri(path, base: "http://localhost:9200")
       if path.first != "/"
