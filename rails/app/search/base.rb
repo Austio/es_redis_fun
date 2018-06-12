@@ -5,10 +5,13 @@ require "ostruct"
 module Search
   class Base
     def index
-      raise "implement me"
+      # Default turns ::Search::Base => base
+      # and ::Search::Stuff::Things::Foo => stuff_things_foo
+      self.class.name.to_s.downcase.split('::')[1..-1].join('_')
     end
 
     def mapping
+
       raise "implement me"
     end
 

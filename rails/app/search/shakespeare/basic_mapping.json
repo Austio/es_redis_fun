@@ -1,0 +1,32 @@
+{
+  "_mapping": {
+    "_doc": {
+      "properties": {
+        "line_id": {
+          "type": "keyword",
+          "index": true
+        },
+        "play_name": {
+          "type": "text",
+          "index": true
+        },
+        "speech_number": {
+          "type": "keyword",
+          "index": true
+        },
+        "line_number": {
+          "type": "keyword",
+          "index": true
+        },
+        "speaker": {
+          "type": "text",
+          "index": true
+        },
+        "text_entry": {
+          "type": "text",
+          "index": true
+        }
+      }
+    }
+  }
+}

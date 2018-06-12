@@ -1,0 +1,58 @@
+{
+  "_mapping": {
+    "_doc": {
+      "settings": {
+        "analysis": {
+          "filter": {
+            "shingle_2": {
+              "type": "shingle",
+              "output_unigrams": "false"
+            }
+          },
+          "analyzer": {
+            "completion_analyzer": {
+              "tokenizer": "standard",
+              "filter": [
+                "standard",
+                "lowercase",
+                "shingle_2"
+              ]
+            }
+          }
+        }
+      },
+      "properties": {
+        "completion": {
+          "type": "text"
+        },
+        "line_id": {
+          "type": "keyword",
+          "index": true
+        },
+        "play_name": {
+          "type": "text",
+          "analyzer": "completion_analyzer",
+          "copy_to": ["completion"]
+        },
+        "speech_number": {
+          "type": "keyword",
+          "index": true
+        },
+        "line_number": {
+          "type": "keyword",
+          "index": true
+        },
+        "speaker": {
+          "type": "text",
+          "analyzer": "completion_analyzer",
+          "copy_to": ["completion"]
+        },
+        "text_entry": {
+          "type": "text",
+          "analyzer": "completion_analyzer",
+          "copy_to": ["completion"]
+        }
+      }
+    }
+  }
+}
